@@ -25,16 +25,16 @@ docker0.11之前的版本采用黑名单的形式来限制容器的能力，此�
 
 - mount_fd 指向某一个文件系统中的文件或者目录的文件描述符
 - file_handle 描述一个文件或者目录
-[file_handle结构](http://lxr.free-electrons.com/source/include/linux/fs.h#L877)如下:    
-    <code>
-         struct file_handle {
-               unsigned int  handle_bytes;   /* Size of f_handle [in, out] */
-               int           handle_type;    /* Handle type [out] */
-               unsigned char f_handle[0];    /* File identifier (sized by
+[file_handle结构](http://lxr.free-electrons.com/source/include/linux/fs.h#L877)如下:  
+<code>    
+  struct file_handle {
+      unsigned int  handle_bytes;   /* Size of f_handle [in, out] */
+      int           handle_type;    /* Handle type [out] */
+       unsigned char f_handle[0];    /* File identifier (sized by
                                                 caller) [out] */
-           };
-    </code>
-           
+    };
+
+</code>           
 - flags   The flags argument is as for open(2).
 
 file_handle结构中f_handle[0]为8位inode号，在大多数的文件系统中，根目录的inode号为2，这样，攻击者可以通过打开根目录比较目录名和文件，遍历inode号达到查看任意文件的目的
@@ -154,7 +154,7 @@ docker版本 <=0.11 均存在漏洞
 
 
 ##参考链接：
-http://man7.org/linux/man-pages/man2/open_by_handle_at.2.html
-http://man7.org/linux/man-pages/man7/capabilities.7.html
-http://stealth.openwall.net/xSports/shocker.c
-https://medium.com/@fun_cuddles/docker-breakout-exploit-analysis-a274fff0e6b3#.80qhbidek
+- http://man7.org/linux/man-pages/man2/open_by_handle_at.2.html
+- http://man7.org/linux/man-pages/man7/capabilities.7.html
+- http://stealth.openwall.net/xSports/shocker.c
+- https://medium.com/@fun_cuddles/docker-breakout-exploit-analysis-a274fff0e6b3#.80qhbidek

@@ -10,7 +10,9 @@ docker是一个开源的容器引擎，它对LXC进一步的封装，达到操�
 docker0.11之前版本的open_by_handle_at()函数允许进程访问file_handle结构的已加载文件系统上的文件，该结构暴力试验inode数字区分文件，本地攻击者可利用此漏洞绕过某些安全限制并执行未授权操作。
 
 ##具体分析：
-docker0.11之前的版本采用黑名单的形式来限制容器的能力，此次能够逃逸的原因是没有禁止open_by_handle_at()函数的CAP_DAC_READ_SEARCH能力。有关CAP_DAC_READ_SEARCH请查阅[capabilities的文档](http://man7.org/linux/man-pages/man7/capabilities.7.html)  
+docker0.11之前的版本采用黑名单的形式来限制容器的能力，此次能够逃逸的原因是没有禁止open_by_handle_at()函数的CAP_DAC_READ_SEARCH能力。  
+有关CAP_DAC_READ_SEARCH请查阅[capabilities的文档](http://man7.org/linux/man-pages/man7/capabilities.7.html)  
+
 关于CAP_DAC_READ_SEARCH的描述如下：
 
     * Bypass file read permission checks and directory read and
@@ -25,9 +27,11 @@ docker0.11之前的版本采用黑名单的形式来限制容器的能力，此�
 
 - mount_fd 指向某一个文件系统中的文件或者目录的文件描述符
 - file_handle 描述一个文件或者目录
+- flags   The flags argument is as for open(2).
+
 [file_handle结构](http://lxr.free-electrons.com/source/include/linux/fs.h#L877)如下:   
 
-<p><code>
+
      struct file_handle {
           unsigned int  handle_bytes;   /* Size of f_handle [in, out] */
           int           handle_type;    /* Handle type [out] */
@@ -35,9 +39,6 @@ docker0.11之前的版本采用黑名单的形式来限制容器的能力，此�
                                                     caller) [out] */
         };
     
-</code></p>       
-
-- flags   The flags argument is as for open(2).
 
 file_handle结构中f_handle[0]为8位inode号，在大多数的文件系统中，根目录的inode号为2，这样，攻击者可以通过打开根目录比较目录名和文件，遍历inode号达到查看任意文件的目的
 

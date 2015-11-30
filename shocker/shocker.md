@@ -4,14 +4,14 @@
 容器逃逸  本地安全限制绕过
 
 ##组件介绍：
-docker是一个开源的容器引擎，它对LXC进一步的封装，达到操作系统层面上的虚拟化
+docker是一个开源的容器引擎，它对LXC进一步封装，从而达到操作系统层面上的虚拟化
 
 ##漏洞分析：
 docker0.11之前版本的open_by_handle_at()函数允许进程访问file_handle结构的已加载文件系统上的文件，该结构暴力试验inode数字区分文件，本地攻击者可利用此漏洞绕过某些安全限制并执行未授权操作。
 
 ##具体分析：
-docker0.11之前的版本采用黑名单的形式来限制容器的能力，此次能够逃逸的原因是没有禁止open_by_handle_at()函数的CAP_DAC_READ_SEARCH能力。  
-下面只是简略的描述功能，更多关于的CAP_DAC_READ_SEARCH详细内容请查阅[capabilities](http://man7.org/linux/man-pages/man7/capabilities.7.html)
+docker0.11之前版本采用黑名单的形式来限制容器的能力，此次能够逃逸的原因是没有禁止open_by_handle_at()函数的CAP_DAC_READ_SEARCH能力。  
+下面只是简略的描述其功能，更多关于CAP_DAC_READ_SEARCH的内容请查阅[capabilities](http://man7.org/linux/man-pages/man7/capabilities.7.html)
 
 CAP_DAC_READ_SEARCH的描述如下：
 
@@ -19,14 +19,14 @@ CAP_DAC_READ_SEARCH的描述如下：
       execute permission checks;
     * Invoke open_by_handle_at(2).
 
-如果open_by_handle_at函数具有CAP_DAC_READ_SEARCH能力，那它可以读取任意文件和文件夹。  
+如果open_by_handle_at函数具有CAP_DAC_READ_SEARCH，那它就可以读取任意文件和文件夹。  
 
 [open_by_handle_at](http://man7.org/linux/man-pages/man2/open_by_handle_at.2.html)的定义如下：
 
     int open_by_handle_at(int mount_fd, struct file_handle *handle,int flags);
 
-- mount_fd 指向某一个文件系统中的文件或者目录的文件描述符
-- file_handle 描述一个文件或者目录
+- mount_fd 指向某一个文件系统中文件或者目录的文件描述符
+- file_handle  一个文件或者目录的描述信息
 - flags   The flags argument is as for open(2).
 
 [file_handle结构](http://lxr.free-electrons.com/source/include/linux/fs.h#L877)如下:   
@@ -40,7 +40,8 @@ CAP_DAC_READ_SEARCH的描述如下：
         };
     
 
-file_handle结构中f_handle[0]为8位inode号，在大多数的文件系统中，根目录的inode号为2，这样，攻击者可以通过打开根目录,比较目录名和文件名，遍历inode号达到查看任意文件的目的。
+file_handle结构中f_handle[0]为8位inode号。    
+在大多数的文件系统中，根目录的inode号为2，这个信息提供了一个可以暴力破解的方式： 攻击者可以通过打开根目录,比较目录名和文件名，遍历inode号达到查看任意文件的目的。
 
 ##具体过程：
 以查看/etc/shadow为例

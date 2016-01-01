@@ -151,6 +151,14 @@ docker version 版本 <=0.11 均存在漏洞
 ##影响版本：
 docker版本 <=0.11 均存在漏洞
 
+
+##官方修复
+官方讨论白名单的方式来赋予权限，可见[Granular capabilities / priviledged whitelist](https://github.com/docker/docker/issues/2080)  
+官方正式去掉黑名单，可见[dockerinit: drop capabilities](https://github.com/docker/docker/pull/3015/files)  
+去掉CAP_DAC_READ_SEARCH的[请求](https://github.com/docker/docker/pull/6525/commits)也被关闭了
+
+
+
 ##相同漏洞：  
 - [CVE-2014-3519](http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3519)
 
@@ -160,3 +168,4 @@ docker版本 <=0.11 均存在漏洞
 - http://man7.org/linux/man-pages/man7/capabilities.7.html
 - http://stealth.openwall.net/xSports/shocker.c
 - https://medium.com/@fun_cuddles/docker-breakout-exploit-analysis-a274fff0e6b3#.80qhbidek
+- https://blog.docker.com/2014/06/docker-container-breakout-proof-of-concept-exploit/

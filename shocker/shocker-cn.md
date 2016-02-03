@@ -146,7 +146,8 @@ file_handle结构中f_handle[0]为8位inode号。
 
 ##漏洞验证方式：  
 docker version 版本 <=0.11 均存在漏洞  
-测试[poc](http://stealth.openwall.net/xSports/shocker.c) 可验证
+测试[poc](http://stealth.openwall.net/xSports/shocker.c) 可验证  
+作者提供了测试镜像： gabrtv/shocker  已经修复会提示没有权限  
 
 ##影响版本：
 docker版本 <=0.11 均存在漏洞
